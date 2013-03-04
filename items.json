@@ -1,0 +1,21 @@
+[
+    {"name": "T-shirt", "category": "Clothing", "color": "red", "size": "small", "price": 1.99, "in_store": 12},
+    {"name": "T-shirt", "category": "Clothing", "color": "blue", "size": "large", "price": 2.99, "in_store": 0},
+    {"name": "T-shirt", "category": "Clothing", "color": "green", "size": "large", "price": 2.49, "in_store": 32},
+    {"name": "T-shirt", "category": "Clothing", "color": "black", "size": "medium", "price": 3.99, "in_store": 89},
+    
+    {"name": "Jeans", "category": "Clothing", "color": "black", "size": "small", "price": 2.99, "in_store": 12},
+    {"name": "Jeans", "category": "Clothing", "color": "blue", "size": "small", "price": 2.99, "in_store": 12},
+    {"name": "Jeans", "category": "Clothing", "color": "red", "size": "medium", "price": 12.99, "in_store": 34},
+    {"name": "Jeans", "category": "Clothing", "color": "blue", "size": "medium", "price": 12.99, "in_store": 1},
+    
+    {"name": "Kitchen desk", "category": "Furniture", "color": "wood", "size": "small", "price": 99.00, "in_store": 1},
+    {"name": "Writing desk", "category": "Furniture", "color": "metal", "size": "medium", "price": 129.00, "in_store": 12},
+    {"name": "A lamp", "category": "Furniture", "color": "green", "size": "small", "price": 34.99, "in_store": 5},
+    {"name": "Bookshelf", "category": "Furniture", "color": "black", "size": "medium", "price": 56.00, "in_store": 23},
+    
+    {"name": "Hammer", "category": "Tools", "color": "pink", "size": "", "price": 5.99, "in_store": 2},
+    {"name": "Chainsaw", "category": "Tools", "color": "red", "size": "", "price": 399.00, "in_store": 11},
+    {"name": "Knife", "category": "Tools", "color": "black", "size": "small", "price": 2.99, "in_store": 567},
+    {"name": "Knife", "category": "Tools", "color": "black", "size": "large", "price": 5.99, "in_store": 65}
+]
