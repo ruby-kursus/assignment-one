@@ -117,12 +117,3 @@ class Store
 	end
 end
 
-#r = Store.new
-#r.import_items('items.json')
-
-class Array
-  def search
-    inject(0.0) { |result, el| result + el }
-  end
-end
-
