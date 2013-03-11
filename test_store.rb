@@ -13,7 +13,6 @@ class TestStore < MiniTest::Unit::TestCase
     @default_item = @store.search(:name => 'Knife', :size => 'small').first
   end
 
-
   def test_search_by_multiple_search_criteria
     assert_equal 2, @store.search(:color => 'blue', :name => 'jeans').size
   end
