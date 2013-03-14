@@ -43,55 +43,52 @@ attr_accessor :total_sale
     articles = []
     @@items.select {|item| item[:category] == category}.map{ |item| item[:name] }.flatten.uniq.sort
   end
-
-
-  class Cart
-    attr_accessor :store
-    attr_accessor :items
-
-    def initialize(store)
-      @store = store
-      @items = []
-    end
-
-    def total_cost
-      if total_items == 0
-        return 0.0
-      else
-        return @items.map{|item| item[:price] }.flatten.inject{|sum,x| sum + x }*100.round / 100.0
-      end
-    end
-
-    def add_item(item, quantity = 1)
-      if quantity > item.in_store
-        quantity = item.in_store
-      end
-      quantity.times do 
-        if item.available?     
-          @items << item
-        end
-      end
-    end
-
-    def total_items
-      return @items.size
-    end
-
-    def unique_items
-      return @items.uniq.first.to_a
-    end
-
-    def checkout!
-      @items.each do |item|
-        item[:in_store] -= 1
-      end
-      @store.total_sale += total_cost
-    end
-  end
-
 end
 
 
+class Store::Cart
+  attr_accessor :store
+  attr_accessor :items
+
+  def initialize(store)
+    @store = store
+    @items = []
+  end
+
+  def total_cost
+    if total_items == 0
+      return 0.0
+    else
+      return @items.map{|item| item[:price] }.flatten.inject{|sum,x| sum + x }*100.round / 100.0
+    end
+  end
+
+  def add_item(item, quantity = 1)
+    if quantity > item.in_store
+      quantity = item.in_store
+    end
+    quantity.times do 
+      if item.available?     
+        @items << item
+      end
+    end
+  end
+
+  def total_items
+    return @items.size
+  end
+
+  def unique_items
+    return @items.uniq
+  end
+
+  def checkout!
+    @items.each do |item|
+      item[:in_store] -= 1
+    end
+    @store.total_sale += total_cost
+  end
+end
 
 
 
