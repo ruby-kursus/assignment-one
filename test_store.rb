@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'json'
 
 require_relative 'store'
 
@@ -38,7 +37,7 @@ class TestStore < MiniTest::Unit::TestCase
   end
   
   def test_unique_items_in_category
-    assert_equal ['Jeans', 'T-shirt'], @store.unique_articles_in_category('Clothing') 
+    assert_equal ['Jeans', 'T-shirt'].sort, @store.unique_articles_in_category('Clothing').sort 
   end
   
   def test_cart_initialization
@@ -50,7 +49,7 @@ class TestStore < MiniTest::Unit::TestCase
   def test_add_one_item_into_cart
     @cart.add_item(@default_item)
     assert_equal 1, @cart.total_items
-    assert_equal Array(@default_item), @cart.unique_items
+    assert_equal [@default_item], @cart.unique_items
     assert @cart.unique_items.include?(@default_item)
   end
   
@@ -58,14 +57,14 @@ class TestStore < MiniTest::Unit::TestCase
     n = 5
     n.times { @cart.add_item(@default_item) }
     assert_equal n, @cart.total_items
-    assert_equal Array(@default_item), @cart.unique_items
+    assert_equal [@default_item], @cart.unique_items
     assert_equal 14.95, @cart.total_cost
   end
   
   def test_add_item_with_quantity_into_cart
     @cart.add_item(@default_item, 5)
     assert_equal 5, @cart.total_items
-    assert_equal Array(@default_item), @cart.unique_items
+    assert_equal [@default_item], @cart.unique_items
   end
   
   def test_add_item_multiple_items_into_cart
