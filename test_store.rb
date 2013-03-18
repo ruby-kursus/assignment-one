@@ -12,7 +12,7 @@ class TestStore < MiniTest::Unit::TestCase
     @cart = Store::Cart.new(@store)
     @default_item = @store.search(:name => 'Knife', :size => 'small').first
   end
-  
+
   def test_search_by_multiple_search_criteria
     assert_equal 2, @store.search(:color => 'blue', :name => 'jeans').size
   end
@@ -106,4 +106,5 @@ class TestStore < MiniTest::Unit::TestCase
     @cart.checkout!
     assert_equal @store.total_sale, (@default_item.price * n).round(2)
   end
+
 end
