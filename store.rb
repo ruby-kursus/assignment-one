@@ -53,6 +53,7 @@ class Store
 		def checkout!
 			@items.each do |item|
             	item[:in_store] -= 1
+            	item[:in_store] > 0 ? item[:available] = true : item[:available] = false
         	end
         	@store.total_sale += self.total_cost
 		end
@@ -67,21 +68,25 @@ class Store
 		items = JSON.parse(File.read(json))
 		items.each do |item|
             ese = item.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
+            ese[:in_store] > 0 ? ese[:available] = true : ese[:available] = false
             @esemed.push(ese)
         end
 	end
 
-	def search(params)
-		puts params.values
-		return @esemed.select{|ese| (params[:name] == nil || ese[:name] == params[:name].capitalize) &&\
-		  	(params[:category] == nil || ese[:category] == params[:category].capitalize) &&\
-			(params[:color] == nil || ese[:color] == params[:color].downcase) &&\
-			(params[:size] == nil || ese[:size] == params[:size].downcase) &&\
-			(ese[:price] == params[:price] || params[:price] == nil) &&\
-			(ese[:in_store] == params[:in_store] || params[:in_store] == nil)}
+	def match(hash = {})
+		hash.each do |k,v|
+			item.send[:k]
+		end
 	end
 
-	def items_sorted_by(veerg, asc)
+	def search(params)
+		x = Array.new()
+		@esemed.select{|item| x << item if item.values_at(*params.keys).map{|ese| (ese.is_a? String) ? ese.downcase : ese} == \
+		params.values_at(*params.keys).map{|ese| (ese.is_a? String) ? ese.downcase : ese}}
+		return x
+	end
+
+	def items_sorted_by(veerg, asc = :asc)
 		if(asc == :asc)
 			return @esemed.sort_by { |hash| hash[veerg] }
 		else
@@ -96,16 +101,14 @@ class Store
 	end
 
 	def unique_articles_in_category(category)
-		# artiklid = Array.new()
 		@esemed.inject([]){ |result, ese| result << ese[:name]\
 		if ese[:category] == category;\
 		result}.uniq()
 	end
+
 end
 
-store = Store.new
-cart = Store::Cart.new(store)
-store.import_items('items.json')
-# puts store.unique_articles_in_category('Clothing').sort
-
-puts store.search(:in_store => 1, :color=>"blue")
+# store = Store.new
+# cart = Store::Cart.new(store)
+# store.import_items('items.json')
+# puts store.search(:color => 'green', :category => 'furniture', :available => true).first
