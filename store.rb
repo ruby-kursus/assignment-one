@@ -146,8 +146,3 @@ class Hash
     included
   end
 end
-
-
-def test(var="",extra="")
-  puts "#{var}: #{extra}"
-end
