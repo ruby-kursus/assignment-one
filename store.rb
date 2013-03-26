@@ -66,8 +66,7 @@ class Store
     end
 
     def add_item(asi, kogusSoovitud=1)
-     thisItem = (@store.search(asi)).first
-     kogusPoes = thisItem.in_store
+     kogusPoes = asi.in_store
      kogus = [kogusPoes,kogusSoovitud].min
      kogus.times {
        @items.push(asi) 
