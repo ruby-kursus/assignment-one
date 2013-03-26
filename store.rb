@@ -1,155 +1,97 @@
-# Yout little input goes here!
 class Store
-  @@items_in_store = []
-  @@categories = []
-     @searchResults = []
-  attr_accessor :total_sale
+  attr_accessor :items_in_store, :total_sale
+  attr_reader :categories
 
    def initialize
      @total_sale = 0
+     @items_in_store = []
+     @categories = []
    end
  
-   def items_in_store
-     @@items_in_store
-   end
-
   def items_sorted_by(indic, que)
-     if (que.to_s == "asc")
-        @@items_in_store.sort { |a,b| a[indic] <=> b[indic]} 
+     if (que == :asc)
+        @items_in_store.sort { |a,b| a[indic] <=> b[indic]} 
      else
-        @@items_in_store.sort { |a,b| b[indic] <=> a[indic]}
+        @items_in_store.sort { |a,b| b[indic] <=> a[indic]}
      end
   end        
 
-  def unique_articles_in_category(cat = 'Clothing')
-     unique_articles = []
-     @@items_in_store.each do |itemm|
-         if (itemm[:category] == cat)
-           unique_articles.push(itemm[:name]) if !unique_articles.include? itemm[:name]
-         end
-     end
-     unique_articles
+  def unique_articles_in_category(cat)
+     articles = search(:category => cat) 
+     articles.map{ |item| item[:name] }.flatten.uniq
   end
 
   def categories 
-     @@categories.sort
+     @items_in_store.map{ |item| item[:category] }.flatten.uniq.sort
   end
 
   def search(args = {}) 
-     @searchResults = []
-     @searchResults.clear
-     searchArr = @@items_in_store
-     searchArr.each do |itemm|
-         c = compare(args, itemm)
-         @searchResults.push(itemm) if c && (!@searchResults.include? itemm)
-     end
-     @searchResults
+     searchResults = @items_in_store.select{ |item| compare(args, item) }
   end 
 
-  def compare(details = {}, full = {}) 
-     comp = true 
-     
-     if (details.has_key?(:available))
-         if (full.in_store <= 0 && details.available == true)
-           comp = false
-         elsif (full.in_store > 0 && details.available == false)
-           comp = false
-         end
-     end
-     
+  def compare(details, item)
+        if details.has_key?(:available)
+           return false if !(item.in_store > 0) && details[:available]
+           return false if  (item.in_store > 0) && !details[:available]
+        end
         details.each { |k,v| 
-         itemAt_full = full[k]
-         if (k != :available)
-            if v == nil
-               comp = false
-               break
-            elsif itemAt_full.to_s.downcase != v.to_s.downcase
-               comp = false
-               break
-            end 
-         end
+            valueAt_item = item[k]
+            if v.is_a? String 
+               return false if valueAt_item.to_s.downcase != v.to_s.downcase
+            elsif k != :available
+               return false if valueAt_item != v
+            end
         }
-     
-     comp
+     true
   end 
 
-#20
   def import_items(filename)
-     require "json"
-     massiiv = JSON.parse(IO.read(filename) )
-     #lisab poe massiivi uue asja
-     @@items_in_store = []
-     massiiv.each do |asi|
-        #muuda stringilised võtmed objektideks
-        asi = asi.each_with_object({}){|(k,v), h| h[k.to_sym] = v}
-        @@items_in_store << asi
-        @@categories << asi.category if !@@categories.include? asi.category
+     require "json"                          #muuda stringilised võtmed objektideks
+     massiiv = JSON.parse(IO.read(filename), :symbolize_names => true)
+     massiiv.each do |asi|#lisab poe massiivi uue asja
+        @items_in_store.push(asi)
      end
-  end
-#last in class Store
+  end#last in class Store
+
 
   class Cart
-    attr_accessor :items, :store, :unique_items
+    attr_accessor :items, :store, :unique_items, :total_cost, :total_items
 
     def initialize(args)
       @store = args
       @items = []
       @unique_items = []
+      @total_cost = 0
+      @total_items = 0
     end
 
     def add_item(asi, kogusSoovitud=1)
-     i=0
-     storeItems = @store.items_in_store
      thisItem = (@store.search(asi)).first
-     storeIndex = storeItems.index(thisItem)
      kogusPoes = thisItem.in_store
      kogus = [kogusPoes,kogusSoovitud].min
-     while i < kogus
-       @items.push(asi)
-       i += 1
-       @store.items_in_store[storeIndex][:in_store] -= 1
-       @store.total_sale = (@store.total_sale + @store.items_in_store[storeIndex].price).round(2)
-     end
+     kogus.times {
+       @items.push(asi) 
+       @total_cost = (@total_cost + asi.price).round(2)
+       @total_items += 1
+     }
      @unique_items.push(asi) if !@unique_items.include? asi
-    end
-
-    def total_items
-     @total_items = @items.size
-    end
-
-    def total_cost
-     cost = 0.0
-     items.each do |asi|
-        cost += asi[:price]
-     end
-     (cost).round(2)
     end
  
     def checkout!
+       @items.each do |item|
+          storeIndex = @store.items_in_store.index(item)
+          @store.items_in_store[storeIndex][:in_store] -= 1
+          @store.total_sale = (@store.total_sale + @store.items_in_store[storeIndex].price).round(2)
+       end
+       @items.clear
     end
 
   end#end of Cart
-
 end#end of Store
 
 
 class Hash
-  def name
-    self[:name]
-  end
-  def price
-    self[:price]
-  end
-  def available
-    self[:available]
-  end
-  def in_store
-    self[:in_store]
-  end
-  def color
-    self[:color]
-  end
-  def category
-    self[:category]
-  end
+ def method_missing(n)
+   self[n.to_sym]
+ end
 end
